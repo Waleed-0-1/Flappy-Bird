@@ -216,7 +216,7 @@ import sys
 import pygame
 from pygame.locals import *
 
-# Game Constants
+
 FPS = 32
 SCREENWIDTH = 289
 SCREENHEIGHT = 511
@@ -225,9 +225,9 @@ GROUNDY = SCREENHEIGHT * 0.8
 GAME_SPRITES = {}
 GAME_SOUNDS = {}
 PLAYER = 'gallery/sprites/bird.png'
-BACKGROUND = 'gallery/sprites/bg.png'  # updated
-PIPE = 'gallery/sprites/pillar.png'     # changed from pipe.png
-BIRD_SCALE = 0.12  # scale bird image
+BACKGROUND = 'gallery/sprites/bg.png'  
+PIPE = 'gallery/sprites/pillar.png'     
+BIRD_SCALE = 0.12 
 
 def welcomeScreen():
     playerx = int(SCREENWIDTH / 5)
@@ -337,30 +337,30 @@ def mainGame():
 
 
 def isCollide(playerx, playery, upperPipes, lowerPipes):
-    # 1. Check if player hits ground or ceiling
+    
     if playery > GROUNDY - 25 or playery < 0:
         GAME_SOUNDS['hit'].play()
         return True
     
-    # 2. Create a Rectangle for the player
+   
     player_w = GAME_SPRITES['player'].get_width()
     player_h = GAME_SPRITES['player'].get_height()
     playerRect = pygame.Rect(playerx, playery, player_w, player_h)
 
-    # 3. Check collision with Upper Pipes
+    
     pipe_w = GAME_SPRITES['pipe'][0].get_width()
     pipe_h = GAME_SPRITES['pipe'][0].get_height()
 
     for pipe in upperPipes:
-        # Create Rect for upper pipe
+      
         pipeRect = pygame.Rect(pipe['x'], pipe['y'], pipe_w, pipe_h)
         if playerRect.colliderect(pipeRect):
             GAME_SOUNDS['hit'].play()
             return True
 
-    # 4. Check collision with Lower Pipes
+ 
     for pipe in lowerPipes:
-        # Create Rect for lower pipe
+        
         pipeRect = pygame.Rect(pipe['x'], pipe['y'], pipe_w, pipe_h)
         if playerRect.colliderect(pipeRect):
             GAME_SOUNDS['hit'].play()
@@ -386,7 +386,7 @@ if __name__ == "__main__":
     FPSCLOCK = pygame.time.Clock()
     pygame.display.set_caption('Flappy Bird by Waleed')
 
-    # Numbers
+    
     GAME_SPRITES['numbers'] = tuple(
         pygame.transform.scale(
             pygame.image.load(f'gallery/sprites/{i}.png').convert_alpha(),
@@ -394,15 +394,15 @@ if __name__ == "__main__":
         ) for i in range(10)
     )
 
-    # Message
+    
     msg_img = pygame.image.load('gallery/sprites/message.png').convert_alpha()
     GAME_SPRITES['message'] = pygame.transform.scale(msg_img, (200, 90))
 
-    # Base
+    
     base_img = pygame.image.load('gallery/sprites/base.png').convert_alpha()
     GAME_SPRITES['base'] = pygame.transform.scale(base_img, (SCREENWIDTH, 100))
 
-    # Pipes
+    
     PIPE_WIDTH = 52
     PIPE_HEIGHT = 320
     pipe_img = pygame.image.load(PIPE).convert_alpha()
@@ -411,18 +411,17 @@ if __name__ == "__main__":
         pygame.transform.scale(pipe_img, (PIPE_WIDTH, PIPE_HEIGHT))
     )
 
-    # Sounds
+    
     GAME_SOUNDS['die'] = pygame.mixer.Sound('gallery/audio/die.wav')
     GAME_SOUNDS['hit'] = pygame.mixer.Sound('gallery/audio/hit.wav')
     GAME_SOUNDS['point'] = pygame.mixer.Sound('gallery/audio/point.wav')
     GAME_SOUNDS['swoosh'] = pygame.mixer.Sound('gallery/audio/swoosh.wav')
     GAME_SOUNDS['wing'] = pygame.mixer.Sound('gallery/audio/wing.wav')
 
-    # Background
+    
     bg_img = pygame.image.load(BACKGROUND).convert()
     GAME_SPRITES['background'] = pygame.transform.scale(bg_img, (SCREENWIDTH, SCREENHEIGHT))
 
-    # Bird
     bird_img = pygame.image.load(PLAYER).convert_alpha()
     w, h = bird_img.get_size()
     BIRD_SCALE = 0.15

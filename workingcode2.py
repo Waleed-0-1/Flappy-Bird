@@ -3,7 +3,7 @@ import random
 import sys
 from pygame.locals import *
 
-# --- GLOBAL SETTINGS ---
+#ACTUAL GAME SETTINGS
 FPS = 32
 SCREENWIDTH = 289
 SCREENHEIGHT = 511
@@ -12,7 +12,7 @@ SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 GAME_SPRITES = {}
 GAME_SOUNDS = {}
 
-# --- ASSETS ---
+#assests from gallery
 PLAYER_IMG = 'bird.png'
 BACKGROUND_IMG = 'bg.png'
 PIPE_IMG = 'pillar.png'
@@ -26,14 +26,14 @@ AUDIO_FILES = {
     'wing': 'wing.wav'
 }
 
-# --- SCALE FACTORS ---
+#sizing
 BIRD_SCALE = 0.12
 PIPE_SCALE = 0.3
 NUMBER_SCALE = 0.2
 
-# --- FUNCTIONS ---
+
 def load_assets():
-    # Load numbers
+    
     numbers_imgs = []
     for file in NUMBERS:
         img = pygame.image.load(f'Gallery/Sprites/{file}').convert_alpha()
@@ -42,28 +42,28 @@ def load_assets():
         numbers_imgs.append(img)
     GAME_SPRITES['numbers'] = numbers_imgs
 
-    # Load bird
+    #adding bird
     bird_img = pygame.image.load(f'Gallery/Sprites/{PLAYER_IMG}').convert_alpha()
     w,h = bird_img.get_size()
     bird_img = pygame.transform.scale(bird_img, (int(w*BIRD_SCALE), int(h*BIRD_SCALE)))
     GAME_SPRITES['player'] = bird_img
 
-    # Load pipes
+    #adding pipes
     pipe_img = pygame.image.load(f'Gallery/Sprites/{PIPE_IMG}').convert_alpha()
     w,h = pipe_img.get_size()
     pipe_img = pygame.transform.scale(pipe_img, (int(w*PIPE_SCALE), int(h*PIPE_SCALE)))
     GAME_SPRITES['pipe'] = (pygame.transform.rotate(pipe_img, 180), pipe_img)  # upper, lower
 
-    # Load background
+    #adding background
     GAME_SPRITES['background'] = pygame.image.load(f'Gallery/Sprites/{BACKGROUND_IMG}').convert()
 
-    # Base
+    #base adding
     base_surf = pygame.Surface((SCREENWIDTH, int(SCREENHEIGHT*0.2)))
     base_surf.fill((222,184,135))
     pygame.draw.line(base_surf, (34,139,34), (0,0), (SCREENWIDTH,0), 10)
     GAME_SPRITES['base'] = base_surf
 
-    # Load sounds
+    #sound affescts form gallery/audio
     for key, file in AUDIO_FILES.items():
         GAME_SOUNDS[key] = pygame.mixer.Sound(f'Gallery/audio/{file}')
 
@@ -101,12 +101,12 @@ def is_collide(playerx, playery, upperpipes, lowerpipes):
     playerW = GAME_SPRITES['player'].get_width()
     playerH = GAME_SPRITES['player'].get_height()
 
-    # Ground or ceiling
+    
     if playery > GROUNDY - 5 or playery < 0:
         GAME_SOUNDS['hit'].play()
         return True
 
-    # Pipes
+    #Pipes
     for pipe in upperpipes:
         if (playerx + playerW > pipe['x'] and playerx < pipe['x'] + GAME_SPRITES['pipe'][0].get_width()) and (playery < pipe['y'] + GAME_SPRITES['pipe'][0].get_height()):
             GAME_SOUNDS['hit'].play()
@@ -158,7 +158,7 @@ def main_game():
         if is_collide(playerx, playery, upperPipes, lowerPipes):
             return
 
-        # Score update
+        #showing score
         playerMidPos = playerx + GAME_SPRITES['player'].get_width()/2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + GAME_SPRITES['pipe'][0].get_width()/2
@@ -166,30 +166,30 @@ def main_game():
                 score += 1
                 GAME_SOUNDS['point'].play()
 
-        # Player movement
+        #bird moving
         if playerVelY < playerMaxVelY and not playerFlapped:
             playerVelY += playerAccY
         if playerFlapped:
             playerFlapped = False
         playery += min(playerVelY, GROUNDY - playery - GAME_SPRITES['player'].get_height())
 
-        # Move pipes
+        #pipes moving
         for upperPipe, lowerPipe in zip(upperPipes, lowerPipes):
             upperPipe['x'] += pipeVelX
             lowerPipe['x'] += pipeVelX
 
-        # Add new pipe
+        #new pipes
         if 0 < upperPipes[0]['x'] < 5:
             newpipe = get_random_pipe()
             upperPipes.append(newpipe[0])
             lowerPipes.append(newpipe[1])
 
-        # Remove passed pipe
+        #removing old pipes
         if upperPipes[0]['x'] < -GAME_SPRITES['pipe'][0].get_width():
             upperPipes.pop(0)
             lowerPipes.pop(0)
 
-        # Draw everything
+        #blitting
         SCREEN.blit(GAME_SPRITES['background'], (0,0))
         for upperPipe, lowerPipe in zip(upperPipes, lowerPipes):
             SCREEN.blit(GAME_SPRITES['pipe'][0], (upperPipe['x'], upperPipe['y']))
@@ -197,7 +197,7 @@ def main_game():
         SCREEN.blit(GAME_SPRITES['base'], (basex, GROUNDY))
         SCREEN.blit(GAME_SPRITES['player'], (playerx, playery))
 
-        # Draw score
+        
         myDigits = [int(x) for x in str(score)]
         width = sum(GAME_SPRITES['numbers'][digit].get_width() for digit in myDigits)
         Xoffset = (SCREENWIDTH - width) // 2
@@ -208,7 +208,7 @@ def main_game():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-# --- MAIN ---
+
 if __name__ == "__main__":
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
